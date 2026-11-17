@@ -10,6 +10,11 @@ on:
     - cron: "5 0 * * *"
   workflow_dispatch:
 
+# Overlapping runs would both push generated files; queue them instead
+concurrency:
+  group: generate-stats
+  cancel-in-progress: false
+
 # A workflow run is made up of one or more jobs that can run sequentially or in
 # parallel
 jobs:
@@ -64,4 +69,5 @@ jobs:
         git add .
         # "echo" returns true so the build succeeds, even if no changed files
         git commit -m 'Update generated files' || echo
+        git pull --rebase
         git push
